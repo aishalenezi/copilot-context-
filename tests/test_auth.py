@@ -13,14 +13,11 @@ def test_decode_token_invalid_returns_none() -> None:
     assert decode_token("not-a-token") is None
 
 
-@pytest.mark.parametrize(
-    ("username", "expected"),
-    [
-        ("asha_01", True),
-        ("ab", False),
-        ("a" * 21, False),
-        ("asha-name", False),
-    ],
-)
-def test_validate_username_before_instructions(username: str, expected: bool) -> None:
-    assert validate_username(username) is expected
+def test_validate_username_accepts_allowed_value() -> None:
+    assert validate_username("asha_01") == "asha_01"
+
+
+@pytest.mark.parametrize("username", ["ab", "a" * 21, "asha-name", "àsha"])
+def test_validate_username_rejects_invalid_value(username: str) -> None:
+    with pytest.raises(ValueError, match="username must be"):
+        validate_username(username)
